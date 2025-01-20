@@ -1,0 +1,201 @@
+
+
+<div class="group-grid">
+  <h1 class="heading">Groups</h1>
+  
+  <div class="search-options">
+    <div class="search-wrapper">
+      <img src="../asset/search.png" alt="Group" class="search_icon" />
+      <input type="text" id="search" name="search" placeholder="Search by Group..." value={{this.searchQuery}} {{on "input" this.updateSearchQuery}} />
+    </div>
+  </div>
+
+  <div class="sort-options">
+    <label for="sort">Sort by:</label>
+    <select id="sort" name="sort" {{on "change" this.updateSortBy}}>
+      <option value="asc-desc">Ascending - Descending</option>
+      <option value="desc-asc">Descending - Ascending</option>
+      <option value="new-old">New - Old</option>
+      <option value="old-new">Old - New</option>
+    </select>
+  </div>
+
+  <p class="total-count">Total: <b>{{this.totalCount}}</b></p>
+
+  <button class="new-button" type="button" {{on "click" this.openNewGroupPopup}}>New Group</button>
+  <button class="add-user-button" type="button" {{on "click" this.openAddUserPopup}}>Add Group Members</button>
+
+  <button class="report-button" type="button" {{on "click" this.openReportPopup}}>Report</button>
+  <button class="report-button" type="button" {{on "click" this.openRecoverPopup}}>Recover</button>
+
+  <div class="tiles">
+    {{#each this.groups as |group|}}
+      <div class="tile">
+        <a href="#" {{on "click" (fn this.showGroupDetails group.name)}}>
+          <img src="../asset/group.png" alt="Group" class="g_icon" /><br>{{group.name}}
+        </a>
+        <p class="delete-button" {{on "click" (fn this.confirmDelete group.name)}}><img src="../asset/dlt.png" alt="Delete" class="dlt" /></p>
+      </div>
+    {{else}}
+      <h3 class="not_found">No groups found</h3>
+      <img src="../asset/empty.png" alt="No Groups" class="empty" />
+    {{/each}}
+  </div>
+
+  {{#if this.selectedGroup}}
+    <div class="popup">
+      <div class="popup-content">
+        <button class="close-button" type="button" {{on "click" this.closePopup}}>X</button>
+        <p>
+          <strong>Group Name:</strong>
+          <i>{{this.selectedGroup.name}}</i>
+        </p>
+        <p>
+          <strong>Description:</strong>
+          <i>{{if this.selectedGroup.description this.selectedGroup.description ""}}</i>
+        </p>
+        <p>
+          <strong>Mail:</strong>
+          <i>{{if this.selectedGroup.mail this.selectedGroup.mail ""}}</i>
+        </p>
+        <p class="report-button" {{on "click" (fn this.showLogDetails this.selectedGroup.name)}}>Report</p>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if this.isNewGroupPopupVisible}}
+    <div class="popup">
+      <div class="popup-content">
+        <button class="close-button" type="button" {{on "click" this.closeNewGroupPopup}}>X</button>
+        <h2>Create New Group</h2>
+        <form {{on "submit" this.createGroup}}>
+          <label for="newGroupName">Group Name:</label>
+          <input type="text" id="newGroupName" name="newGroupName" value={{this.newGroupName}} {{on "input" this.updateNewGroupName}} required />
+
+          <label for="newGroupDescription">Description:</label>
+          <input type="text" id="newGroupDescription" name="newGroupDescription" value={{this.newGroupDescription}} {{on "input" this.updateNewGroupDescription}} required />
+
+          <label for="newGroupMail">Mail:</label>
+          <input type="email" id="newGroupMail" name="newGroupMail" value={{this.newGroupMail}} {{on "input" this.updateNewGroupMail}} required />
+
+          <button type="submit">Create Group</button>
+        </form>
+        <div class="msg">
+          {{#if this.createGroupError}}
+            <div class="error-message">{{this.createGroupError}}</div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  {{/if}}
+
+    {{#if this.isRecoverPopupVisible}}
+    <div class="popup">
+      <div class="popup-content">
+        <button class="close-button" type="button" {{on "click" this.closeRecoverPopup}}>X</button>
+        <h2>Recover User</h2>
+        <form {{on "submit" this.recoverUser}}>
+          <label for="recoverAccountName">Account Name:</label>
+          <input type="text" id="recoverAccountName" name="recoverAccountName" value={{this.recoverAccountName}} {{on "input" this.updateRecoverAccountName}} required />
+
+          <label for="recoverTimeCreated">Time Created:</label>
+          <input type="text" id="recoverTimeCreated" name="recoverTimeCreated" placeholder="YYYY-MM-DD HH:MM:SS" value={{this.recoverTimeCreated}} {{on "input" this.updateRecoverTimeCreated}} required />
+
+          <button type="submit">Recover User</button>
+        </form>
+        <div class="msg"> 
+          {{#if this.recoverUserError}}
+            <div class="error-message">{{this.recoverUserError}}</div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if this.isAddUserPopupVisible}}
+    <div class="popup">
+      <div class="popup-content">
+        <button class="close-button" type="button" {{on "click" this.closeAddUserPopup}}>X</button>
+        <h2>Add Members</h2>
+        <form {{on "submit" this.addUserToGroup}}>
+          <label for="userName">User Name:</label>
+          <input type="text" id="userName" name="userName" value={{this.userName}} {{on "input" this.updateUserName}} required />
+
+          <label for="groupName">Group Name:</label>
+          <input type="text" id="groupName" name="groupName" value={{this.groupName}} {{on "input" this.updateGroupName}} required />
+
+          <button type="submit">Add User</button>
+        </form>
+        <div class="msg">
+          {{#if this.addUserError}}
+            <div class="error-message">{{this.addUserError}}</div>
+          {{/if}}
+          {{#if this.addUserSuccess}}
+            <div class="success-message">{{this.addUserSuccess}}</div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if this.isReportPopupVisible}}
+    <div class="popup">
+      <div class="popup-content">
+        <button class="close-button" type="button" {{on "click" this.closeReportPopup}}>X</button>
+        <h2>Group Creation Report</h2>
+        <canvas id="groupReportChart"></canvas>
+      </div>
+    </div>
+  {{/if}}
+    {{#if this.isGroupDetailsPopupVisible}}
+      <div class="popup">
+        <div class="popup-content">
+          <button class="close-button" type="button" {{on "click" this.closeGroupDetailsPopup}}>X</button>
+          <h2>Groups</h2>
+          <ul>
+            {{#each this.groupDetails as |group|}}
+              <li>
+                <p class="group-name" {{on "click" (fn this.showLogDetails group.name)}}>{{group.name}}</p>
+              </li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    {{/if}}
+{{#if this.isLogDetailsPopupVisible}}
+  <div class="popup">
+    <div class="popup-content">
+      <button class="close-button" type="button" {{on "click" this.closePopup}}>X</button>
+      <h2>Log Details: {{this.userName}}</h2>
+      <div class="log-container">
+        <table class="log-table">
+          <thead>
+            <tr>
+              {{!-- <th>Account Name</th> --}}
+              <th>Old Value</th>
+              <th>New Value</th>
+              <th>Message</th>
+              <th>Modified Created</th>
+              <th>ChangedOn</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each this.selectedLogGroup as |log|}}
+              <tr>
+                {{!-- <td>{{log.AccountName}}</td> --}}
+                <td>{{log.OldValue}}</td>
+                <td>{{log.NewValue}}</td>
+                <td>{{log.Message}}</td>
+                <td>{{log.TimeCreated}}</td>
+                <td>{{log.ChangedOn}}</td>
+
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{{/if}}
+
+</div>

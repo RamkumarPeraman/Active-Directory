@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <!-- client_servlet -->
+    <servlet>
+        <servlet-name>UserServlet</servlet-name>
+        <servlet-class>com.example.act_dir.client_servlet.UserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserServlet</servlet-name>
+        <url-pattern>/UserServlet/*</url-pattern>
+    </servlet-mapping>
+<!--    ################################################-->
+    <servlet>
+        <servlet-name>GroupServlet</servlet-name>
+        <servlet-class>com.example.act_dir.client_servlet.GroupServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupServlet</servlet-name>
+        <url-pattern>/GroupServlet/*</url-pattern>
+    </servlet-mapping>
+    <!--    ################################################-->
+    <servlet>
+        <servlet-name>ComputerServlet</servlet-name>
+        <servlet-class>com.example.act_dir.client_servlet.ComputerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ComputerServlet</servlet-name>
+        <url-pattern>/ComputerServlet/*</url-pattern>
+    </servlet-mapping>
+    <!--    ################################################-->
+    <servlet>
+        <servlet-name>OUServlet</servlet-name>
+        <servlet-class>com.example.act_dir.client_servlet.OUServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OUServlet</servlet-name>
+        <url-pattern>/OUServlet/*</url-pattern>
+    </servlet-mapping>
+    <!--    ################################################-->
+    <servlet>
+        <servlet-name>DeletedObjServlet</servlet-name>
+        <servlet-class>com.example.act_dir.client_servlet.DeletedObjServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeletedObjServlet</servlet-name>
+        <url-pattern>/DeletedObjServlet/*</url-pattern>
+    </servlet-mapping>
+
+<!--    fetch_client-->
+
+    <servlet>
+        <servlet-name>FetchUserData</servlet-name>
+        <servlet-class>com.example.act_dir.fech_client.FetchUserData</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchUserData</servlet-name>
+        <url-pattern>/FetchUserData</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FetchComputerData</servlet-name>
+        <servlet-class>com.example.act_dir.fech_client.FetchComputerData</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchComputerData</servlet-name>
+        <url-pattern>/FetchComputerData</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FetchGroupData</servlet-name>
+        <servlet-class>com.example.act_dir.fech_client.FetchGroupData</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchGroupData</servlet-name>
+        <url-pattern>/FetchGroupData</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>FetchDeletedData</servlet-name>
+        <servlet-class>com.example.act_dir.fech_client.FetchDeletedData</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchDeletedData</servlet-name>
+        <url-pattern>/FetchDeletedData</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FetchOUData</servlet-name>
+        <servlet-class>com.example.act_dir.fech_client.FetchOUData</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchOUData</servlet-name>
+        <url-pattern>/FetchOUData</url-pattern>
+    </servlet-mapping>
+    <!-- server_servlet -->
+    <servlet>
+        <servlet-name>UserDataServlet</servlet-name>
+        <servlet-class>com.example.act_dir.server_servlet.UserDataServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserDataServlet</servlet-name>
+        <url-pattern>/UserDataServlet/*</url-pattern>
+    </servlet-mapping>
+    <!--    ################################################-->
+    <servlet>
+        <servlet-name>GroupDataServlet</servlet-name>
+        <servlet-class>com.example.act_dir.server_servlet.GroupDataServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupDataServlet</servlet-name>
+        <url-pattern>/GroupDataServlet/*</url-pattern>
+    </servlet-mapping>
+
+
+    <!--    ################################################-->
+    <servlet>
+        <servlet-name>OUDataServlet</servlet-name>
+        <servlet-class>com.example.act_dir.server_servlet.OUDataServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OUDataServlet</servlet-name>
+        <url-pattern>/OUDataServlet/*</url-pattern>
+    </servlet-mapping>
+    <!--    ################################################-->
+    <servlet>
+        <servlet-name>ComputerDataServlet</servlet-name>
+        <servlet-class>com.example.act_dir.server_servlet.ComputerDataServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ComputerDataServlet</servlet-name>
+        <url-pattern>/ComputerDataServlet/*</url-pattern>
+    </servlet-mapping>
+    <!--    ################################################-->
+    <servlet>
+        <servlet-name>DeletedObjDataServlet</servlet-name>
+        <servlet-class>com.example.act_dir.server_servlet.DeletedObjDataServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeletedObjDataServlet</servlet-name>
+        <url-pattern>/DeletedObjDataServlet/*</url-pattern>
+    </servlet-mapping>
+
+
+    <!--    ################################################-->
+    <servlet>
+        <servlet-name>AddUserToGroupServlet</servlet-name>
+        <servlet-class>com.example.act_dir.ad_usr.AddUserToGroupServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddUserToGroupServlet</servlet-name>
+        <url-pattern>/AddUserToGroupServlet/*</url-pattern>
+    </servlet-mapping>
+
+
+
+    <servlet>
+        <servlet-name>CreateGroupServlet</servlet-name>
+        <servlet-class>com.example.act_dir.create_servlet.CreateGroupServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateGroupServlet</servlet-name>
+        <url-pattern>/CreateGroupServlet/*</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>CreateUserServlet</servlet-name>
+        <servlet-class>com.example.act_dir.create_servlet.CreateUserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateUserServlet</servlet-name>
+        <url-pattern>/CreateUserServlet/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CreateComputerServlet</servlet-name>
+        <servlet-class>com.example.act_dir.create_servlet.CreateComputerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateComputerServlet</servlet-name>
+        <url-pattern>/CreateComputerServlet/*</url-pattern>
+    </servlet-mapping>
+
+
+<!--    ############################################################################-->
+    <servlet>
+        <servlet-name>DeleteComputerServlet</servlet-name>
+        <servlet-class>com.example.act_dir.deletedObj.DeleteComputerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteComputerServlet</servlet-name>
+        <url-pattern>/DeleteComputerServlet/*</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>DeleteGroupServlet</servlet-name>
+        <servlet-class>com.example.act_dir.deletedObj.DeleteGroupServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteGroupServlet</servlet-name>
+        <url-pattern>/DeleteGroupServlet/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DeleteUserServlet</servlet-name>
+        <servlet-class>com.example.act_dir.deletedObj.DeleteUserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteUserServlet</servlet-name>
+        <url-pattern>/DeleteUserServlet/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GroupCreationReportServlet</servlet-name>
+        <servlet-class>com.example.act_dir.graph.GroupCreationReportServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupCreationReportServlet</servlet-name>
+        <url-pattern>/GroupCreationReportServlet/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FetchGroupNamesForDayServlet</servlet-name>
+        <servlet-class>com.example.act_dir.graph.FetchGroupNamesForDayServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchGroupNamesForDayServlet</servlet-name>
+        <url-pattern>/FetchGroupNamesForDayServlet/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ComputerCreationReportServlet</servlet-name>
+        <servlet-class>com.example.act_dir.graph.ComputerCreationReportServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ComputerCreationReportServlet</servlet-name>
+        <url-pattern>/ComputerCreationReportServlet/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FetchComputerNamesForDayServlet</servlet-name>
+        <servlet-class>com.example.act_dir.graph.FetchComputerNamesForDayServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchComputerNamesForDayServlet</servlet-name>
+        <url-pattern>/FetchComputerNamesForDayServlet/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UserCreationReportServlet</servlet-name>
+        <servlet-class>com.example.act_dir.graph.UserCreationReportServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserCreationReportServlet</servlet-name>
+        <url-pattern>/UserCreationReportServlet/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FetchUserNamesForDayServlet</servlet-name>
+        <servlet-class>com.example.act_dir.graph.FetchUserNamesForDayServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchUserNamesForDayServlet</servlet-name>
+        <url-pattern>/FetchUserNamesForDayServlet/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FetchLastModUsr</servlet-name>
+        <servlet-class>com.example.act_dir.last_mod.FetchLastModUsr</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchLastModUsr</servlet-name>
+        <url-pattern>/FetchLastModUsr/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FetchLastModComp</servlet-name>
+        <servlet-class>com.example.act_dir.last_mod.FetchLastModComp</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchLastModComp</servlet-name>
+        <url-pattern>/FetchLastModComp/*</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>StoreGroupLog</servlet-name>
+        <servlet-class>com.example.act_dir.last_mod_db.StoreGroupLog</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StoreGroupLog</servlet-name>
+        <url-pattern>/StoreGroupLog/*</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>FetchGroupLog</servlet-name>
+        <servlet-class>com.example.act_dir.fetch_last_mod.FetchGroupLog</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchGroupLog</servlet-name>
+        <url-pattern>/FetchGroupLog</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StoreUserEventServlet</servlet-name>
+        <servlet-class>com.example.act_dir.store_event.StoreUserEventServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StoreUserEventServlet</servlet-name>
+        <url-pattern>/StoreUserEventServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StoreLog</servlet-name>
+        <servlet-class>com.example.act_dir.store_event.StoreLog</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StoreLog</servlet-name>
+        <url-pattern>/StoreLog</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FetchUserLog</servlet-name>
+        <servlet-class>com.example.act_dir.fetch_last_mod.FetchUserLog</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchUserLog</servlet-name>
+        <url-pattern>/FetchUserLog</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RecoverUserServlet</servlet-name>
+        <servlet-class>com.example.act_dir.recover.RecoverUserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RecoverUserServlet</servlet-name>
+        <url-pattern>/RecoverUserServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RecoverComputerServlet</servlet-name>
+        <servlet-class>com.example.act_dir.recover.RecoverComputerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RecoverComputerServlet</servlet-name>
+        <url-pattern>/RecoverComputerServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RecoverGroupServlet</servlet-name>
+        <servlet-class>com.example.act_dir.recover.RecoverGroupServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RecoverGroupServlet</servlet-name>
+        <url-pattern>/RecoverGroupServlet</url-pattern>
+    </servlet-mapping>
+
+
+</web-app>

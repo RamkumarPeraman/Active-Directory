@@ -1,0 +1,124 @@
+<div class="computer-grid">
+  <h1 class="heading">Computers</h1>
+
+  <div class="search-options">
+    <div class="search-wrapper">
+      <img src="../asset/search.png" alt="computer" class="search_icon" />
+      <input type="text" id="search" name="search" placeholder="Search by computer..." value={{this.searchQuery}} {{on "input" this.updateSearchQuery}} />
+    </div>
+  </div>
+
+  <div class="sort-options">
+    <label for="sort">Sort by:</label>
+    <select id="sort" name="sort" {{on "change" this.updateSortBy}}>
+      <option value="asc-desc">Ascending - Descending</option>
+      <option value="desc-asc">Descending - Ascending</option>
+      <option value="new-old">New - Old</option>
+      <option value="old-new">Old - New</option>
+    </select>
+  </div>
+  <p class="total-count">Total : <b>{{this.totalCount}}</b></p>
+  <button class="new-button" type="button" {{on "click" this.openNewComputerPopup}}>New Computer</button>
+  <button class="report-button" type="button" {{on "click" this.openReportPopup}}>Report</button>
+  <div class="tiles">
+    {{#each this.computers as |computer|}}
+      <div class="tile">
+        <a href="#" {{on "click" (fn this.showComputerDetails computer.name)}}>
+          <img src="../asset/computer.png" alt="computer" class="g_icon   " /><br>{{computer.name}}
+        </a>
+        <p class="delete-button" {{on "click" (fn this.confirmDelete computer.name)}}><img src="../asset/dlt.png" alt="Delete" class="dlt" /></p>        
+      </div>
+    {{else}}
+      <h3 class="not_found">No computers found</h3>
+      <img src="../asset/empty.png" alt="No computers" class="empty" />
+    {{/each}}
+  </div>
+
+  {{#if this.selectedComputer}}
+    <div class="popup">
+      <div class="popup-content">
+        <button class="close-button" type="button" {{on "click" this.closePopup}}>X</button>
+        <p>
+          <strong>Computer Name:</strong>
+          <i>{{this.selectedComputer.name}}</i>
+        </p>
+        <p>
+          <strong>Description:</strong>
+          <i>{{this.selectedComputer.description}}</i>
+        </p>
+        {{!--
+        <p>
+          <strong>Location:</strong>
+          <i>{{this.selectedComputer.location}}</i>
+        </p> 
+        --}}
+      </div>
+    </div>
+  {{/if}}
+  
+  {{#if this.isNewComputerPopupVisible}}
+    <div class="popup">
+      <div class="popup-content">
+        <button class="close-button" type="button" {{on "click" this.closeNewComputerPopup}}>X</button>
+        <h2>Create New Computer</h2>
+        <form {{on "submit" this.createComputer}}>
+          <label for="name">Computer Name:</label>
+          <input type="text" id="name" name="name" value={{this.name}} {{on "input" this.updateName}} required />
+          <label for="description">Description:</label>
+          <input type="text" id="description" name="description" value={{this.description}} {{on "input" this.updateDescription}} required />
+
+          <label for="location">Location:</label>
+          <input type="text" id="location" name="location" value={{this.location}} {{on "input" this.updateLocation}} required />
+
+          <button type="submit">Create Computer</button>
+        </form>
+        <div class="msg">
+          {{#if this.createComputerError}}
+            <div class="error-message">{{this.createComputerError}}</div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if this.isReportPopupVisible}}
+    <div class="popup">
+      <div class="popup-content">
+        <button class="close-button" type="button" {{on "click" this.closeReportPopup}}>X</button>
+        <h2>Computer Creation Report</h2>
+        <canvas id="computerReportChart"></canvas>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if this.isComputerDetailsPopupVisible}}
+    <div class="popup">
+      <div class="popup-content">
+        <button class="close-button" type="button" {{on "click" this.closeComputerDetailsPopup}}>X</button>
+        <h2>Computers</h2>
+        <ul>
+          {{#each this.computerDetails as |computer|}}
+            <li>
+              <p class="computer-name" {{on "click" (fn this.showLogDetails computer.name)}}>{{computer.name}}</p>
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if this.isLogDetailsPopupVisible}}
+    <div class="popup">
+      <div class="popup-content">
+        <button class="close-button" type="button" {{on "click" this.closePopup}}>X</button>
+        <h2>Log Details</h2>
+        {{#each this.selectedLogGroup as |log|}}
+          <div class="log-entry">
+            <p>{{log.Message}} - {{log.TimeCreated}}</p>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  {{/if}}
+
+</div>
