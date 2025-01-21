@@ -5,61 +5,42 @@ import { tracked } from '@glimmer/tracking';
 export default class OUController extends Controller {
   @tracked ous = [];
   @tracked selectedOU = null;
-  @tracked searchQuery = '';
-  @tracked sortBy = 'asc-desc';
 
-  get filteredOUs() {
-    let filteredOUs = this.ous;
+  @action
+  async fetchOUs(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    const url = `http://localhost:8080/backend_war_exploded/OUServlet?${query}`;
 
-    if (this.searchQuery) {
-      filteredOUs = filteredOUs.filter((ou) =>
-        ou.ouName.toLowerCase().includes(this.searchQuery.toLowerCase()),
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch organizational units: ${response.statusText}`,
+        );
+      }
+      this.ous = await response.json();
+    } catch (error) {
+      console.error('Error fetching organizational units:', error);
+      this.ous = [];
+    }
+  }
+
+  @action
+  async showOUDetails(ouId) {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/backend_war_exploded/OUServlet?id=${ouId}`,
       );
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch organizational unit details: ${response.statusText}`,
+        );
+      }
+      this.selectedOU = await response.json();
+    } catch (error) {
+      console.error('Error fetching organizational unit details:', error);
+      this.selectedOU = null;
     }
-
-    switch (this.sortBy) {
-      case 'asc-desc':
-        filteredOUs = filteredOUs.sort((a, b) =>
-          a.ouName.localeCompare(b.ouName),
-        );
-        break;
-      case 'desc-asc':
-        filteredOUs = filteredOUs.sort((a, b) =>
-          b.ouName.localeCompare(a.ouName),
-        );
-        break;
-      case 'new-old':
-        filteredOUs = filteredOUs.sort(
-          (a, b) => new Date(b.createdDate) - new Date(a.createdDate),
-        );
-        break;
-      case 'old-new':
-        filteredOUs = filteredOUs.sort(
-          (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
-        );
-        break;
-    }
-
-    return filteredOUs;
-  }
-
-  get totalCount() {
-    return this.filteredOUs.length;
-  }
-
-  @action
-  updateSearchQuery(event) {
-    this.searchQuery = event.target.value;
-  }
-
-  @action
-  updateSortBy(event) {
-    this.sortBy = event.target.value;
-  }
-
-  @action
-  showOUDetails(ou) {
-    this.selectedOU = ou;
   }
 
   @action

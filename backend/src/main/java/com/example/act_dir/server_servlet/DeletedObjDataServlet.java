@@ -1,4 +1,4 @@
-    package com.example.act_dir.server_servlet;
+package com.example.act_dir.server_servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;

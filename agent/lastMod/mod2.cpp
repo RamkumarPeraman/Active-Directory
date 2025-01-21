@@ -10,10 +10,9 @@
 #include <stdexcept>
 #include <string>
 #include <array>
-
 using namespace std;
 
-struct Entry {
+struct Entry{
     string objectName;
     string accountDomain;
     string oldValue;
@@ -23,14 +22,12 @@ struct Entry {
     string changedOn;
     string organization;
 };
-
-string trim(const string& str) {
+string trim(const string& str){
     size_t first = str.find_first_not_of(" \t\n\r+");
     size_t last = str.find_last_not_of(" \t\n\r+");
-    return (first == string::npos || last == string::npos) ? "" : str.substr(first, last - first + 1);
+    return (first == string::npos || last == string::npos) ? "" : str.substr(first,last-first+1);
 }
-
-string convertDateFormat(const string& input) {
+string convertDateFormat(const string& input){
     tm t = {};
     istringstream ss(trim(input));
     ss >> get_time(&t, "%m/%d/%Y %I:%M:%S %p");
@@ -42,12 +39,11 @@ string convertDateFormat(const string& input) {
     oss << put_time(&t, "%Y-%m-%d %H:%M:%S");
     return oss.str();
 }
-
-void sendDataToJavaServlet(const Entry& entry) {
+void sendDataToJavaServlet(const Entry& entry){
     CURL* curl;
     CURLcode res;
     curl = curl_easy_init();
-    if (curl) {
+    if(curl){
         string servletUrl = "http://localhost:8080/backend_war_exploded/StoreLog";
         string jsonData = "{\"TimeCreated\":\"" + entry.modifiedTime +
                              "\",\"objectName\":\"" + entry.objectName +
@@ -64,11 +60,11 @@ void sendDataToJavaServlet(const Entry& entry) {
         curl_easy_setopt(curl, CURLOPT_POST, 1L);
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonData.c_str());
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
         res = curl_easy_perform(curl);
         if (res != CURLE_OK) {
             cerr << "Failed to send data to Java Servlet: " << curl_easy_strerror(res) << endl;
-        } else {
+        }
+        else {
             cout << "Data sent to Java Servlet successfully" << endl;
         }
         curl_slist_free_all(headers);
@@ -92,7 +88,7 @@ string executeCommand(const string& command) {
 }
 
 int main() {
-    string remoteHost = "192.168.243.71";
+    string remoteHost = "192.168.168.72";
     string username = "Administrator";
     string password = "Ram@123";
 
@@ -113,28 +109,28 @@ int main() {
                 $changedOn = $null
                 $organization = $null
                 Write-Host 'Processing event: ' $message
-                if ($message -match 'LDAP Display Name:\s(description|mail|givenName|'')') {
+                if ($message -match 'LDAP Display Name:\s(description|mail|givenName|'')'){
                     $changedOn = $matches[1]
                     Write-Host "Changed On: $changedOn"
-                    if ($message -match 'Value:\s*(.*?)\r') {
+                    if ($message -match 'Value:\s*(.*?)\r'){
                         $attributeValue = $matches[1]
                         $dn = $null
                         $objectName = $null
                         $accountDomain = $null
                         $class = $null
-                        if ($message -match 'DN:\s+(.*)\r') {
+                        if($message -match 'DN:\s+(.*)\r'){
                             $dn = $matches[1]
                         }
-                        if ($message -match 'Object Name:\s+(.*)\r') {
+                        if($message -match 'Object Name:\s+(.*)\r'){
                             $objectName = $matches[1]
                         }
-                        if ($message -match 'Account Domain:\s+(.*)\r') {
+                        if($message -match 'Account Domain:\s+(.*)\r'){
                             $accountDomain = $matches[1]
                         }
-                        if ($dn -match 'CN=(.*?),') {
+                        if($dn -match 'CN=(.*?),'){
                             $objectName = $matches[1]
                         }
-                        if ($message -match 'Class:\s+(.*)\r') {
+                        if($message -match 'Class:\s+(.*)\r'){
                             $class = $matches[1]
                             $organization = $class
                             Write-Host "Organization: $organization"
@@ -162,11 +158,9 @@ int main() {
             }
         }
     )";
-
     ofstream scriptFile("script.ps1");
     scriptFile << psScript;
     scriptFile.close();
-
     string createDirCommand = "sshpass -p '" + password + "' ssh " + username + "@" + remoteHost + " \"powershell.exe -Command \\\"if (-Not (Test-Path -Path 'C:\\temp')) { New-Item -ItemType Directory -Path 'C:\\temp' }\\\"\"";
     system(createDirCommand.c_str());
     string copyCommand = "sshpass -p '" + password + "' scp script.ps1 " + username + "@" + remoteHost + ":C:/temp/script.ps1";
@@ -217,7 +211,6 @@ int main() {
             }
         }
     }
-
     for (const auto& pair : entries) {
         const Entry& entry = pair.second;
         cout << "objectName: " << entry.objectName << endl;

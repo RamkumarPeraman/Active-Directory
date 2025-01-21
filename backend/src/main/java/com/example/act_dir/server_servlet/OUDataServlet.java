@@ -1,87 +1,73 @@
 package com.example.act_dir.server_servlet;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import javax.json.*;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import com.example.act_dir.db.DBConnection;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class OUDataServlet extends HttpServlet {
-    @Override
+    private static final Logger logger = Logger.getLogger(OUDataServlet.class.getName());
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        StringBuilder jsonData = new StringBuilder();
-        String line;
-        try (BufferedReader reader = request.getReader()) {
-            while ((line = reader.readLine()) != null) {
-                jsonData.append(line);
-            }
-        }
+        // Get parameters for multiple OUs
+        String[] ouNames = request.getParameterValues("ouName");
+        String[] descriptions = request.getParameterValues("description");
+        String type = request.getParameter("type");
 
-        JsonObject data;
-        try (JsonReader jsonReader = Json.createReader(new StringReader(jsonData.toString()))) {
-            data = jsonReader.readObject();
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            response.getWriter().write("Invalid JSON format");
-            return;
-        }
-
-        String type = data.getString("type", null);
-        if (type == null || !data.containsKey("ous")) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            response.getWriter().write("Invalid input: 'type' or 'ous' key is missing");
-            return;
-        }
-
-        JsonArray ous = data.getJsonArray("ous");
-
+        // Prepare lists to hold the results
         List<String> successfulInserts = new ArrayList<>();
         List<String> failedInserts = new ArrayList<>();
 
         try (Connection conn = DBConnection.getConnection()) {
-            for (JsonValue ouValue : ous) {
-                JsonObject ou = ouValue.asJsonObject();
-                String ouName = ou.getString("ouName", null);
+            for (int i = 0; i < ouNames.length; i++) {
+                String ouName = ouNames[i];
+                String description = descriptions[i];
+//                String type = types[i];
 
-                if (ouName == null) {
-                    failedInserts.add(ouName);
-                    continue;
-                }
-
-                if (ouExists(conn, ouName)) {
-                    failedInserts.add(ouName);
+                if (ouExists(conn, ouName, description)) {
+                    failedInserts.add(ouName); // Add failed OU to the list
                 } else {
-                    if (insertOU(conn, type, ouName)) {
-                        successfulInserts.add(ouName);
+                    if (insertOU(conn, ouName, type, description)) {
+                        successfulInserts.add(ouName); // Add successful OU to the list
                     } else {
-                        failedInserts.add(ouName);
+                        failedInserts.add(ouName); // Add failed OU to the list
                     }
                 }
             }
+            response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("Successful inserts: " + successfulInserts.toString() + "\nFailed inserts: " + failedInserts.toString());
+            response.getWriter().println("{\"successfulInserts\":" + successfulInserts + ", \"failedInserts\":" + failedInserts + "}");
 
         } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Database connection error", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            e.printStackTrace();
+            response.getWriter().println("{\"error\":\"Unable to connect to the database.\"}");
         }
     }
 
-    private boolean ouExists(Connection conn, String ouName) throws SQLException {
-        String checkSql = "SELECT COUNT(*) FROM act WHERE name = ?";
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Set the response content type
+        response.setContentType("text/html");
+
+        // Write the response
+        response.getWriter().println("<html><body><h1>OU Data Inserted</h1></body></html>");
+    }
+
+    private boolean ouExists(Connection conn, String ouName, String description) throws SQLException {
+        String checkSql = "SELECT COUNT(*) FROM act_dit WHERE name = ? AND description = ?";
         try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
             checkStmt.setString(1, ouName);
+            checkStmt.setString(2, description);
 
             try (ResultSet rs = checkStmt.executeQuery()) {
                 if (rs.next() && rs.getInt(1) > 0) {
@@ -92,12 +78,12 @@ public class OUDataServlet extends HttpServlet {
         return false;
     }
 
-    private boolean insertOU(Connection conn, String type, String ouName) throws SQLException {
-        String insertSql = "INSERT INTO act (type, name, isDeleted) VALUES (?, ?, 'NO')";
+    private boolean insertOU(Connection conn, String ouName, String type, String description) throws SQLException {
+        String insertSql = "INSERT INTO act_dit (type, name, description, isDeleted) VALUES (?, ?, ?, 'NO')";
         try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
             insertStmt.setString(1, type);
             insertStmt.setString(2, ouName);
-
+            insertStmt.setString(3, description);
             int rowsInserted = insertStmt.executeUpdate();
             return rowsInserted > 0;
         }

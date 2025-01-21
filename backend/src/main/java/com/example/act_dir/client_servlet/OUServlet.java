@@ -1,63 +1,87 @@
 package com.example.act_dir.client_servlet;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
+import com.example.act_dir.cors_filter.CORS_Filter;
+import com.example.act_dir.db.DBConnection;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.io.*;
+import java.sql.*;
 
 public class OUServlet extends HttpServlet {
-    private List<JsonObject> ouDataList = new ArrayList<>();
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("application/json");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-        StringBuilder jsonData = new StringBuilder();
-        String line;
-        try (BufferedReader reader = request.getReader()) {
-            while ((line = reader.readLine()) != null) {
-                jsonData.append(line);
-            }
-        }
-        System.out.println("Received JSON data: " + jsonData.toString());
-        JsonObject data;
-        try (JsonReader jsonReader = Json.createReader(new StringReader(jsonData.toString()))) {
-            data = jsonReader.readObject();
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            response.getWriter().write("Invalid JSON format");
-            return;
-        }
-        ouDataList.add(data);
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().write("OU data received successfully");
-    }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        CORS_Filter.setCORSHeaders(response);
         response.setContentType("application/json");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for (JsonObject ouData : ouDataList) {
-            arrayBuilder.add(ouData);
+        String id = request.getParameter("id");
+        String name = request.getParameter("name");
+        String description = request.getParameter("description");
+
+        try (PrintWriter out = response.getWriter()) {
+            String jsonData = getOUDataAsJson(id, name, description);
+            out.write(jsonData);
+        }
+    }
+
+    public String getOUDataAsJson(String id, String name, String description) {
+        StringBuilder query = new StringBuilder("SELECT id, name, description FROM act_dit WHERE type = 'OrganizationUnit' AND isDeleted <> 'YES'");
+        boolean hasCondition = false;
+
+        // Add conditions based on the provided parameters
+        if (id != null && !id.isEmpty()) {
+            query.append(" AND id = ?");
+            hasCondition = true;
+        }
+        if (name != null && !name.isEmpty()) {
+            query.append(hasCondition ? " AND" : " AND").append(" name LIKE ?");
+            hasCondition = true;
+        }
+        if (description != null && !description.isEmpty()) {
+            query.append(hasCondition ? " AND" : " AND").append(" description = ?");
         }
 
-        String wrappedData = arrayBuilder.build().toString();
-        System.out.print("Returning data: " + wrappedData);
-        response.getWriter().write(wrappedData);
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query.toString())) {
+            int index = 1;
+            if (id != null && !id.isEmpty())
+                pstmt.setInt(index++, Integer.parseInt(id));
+            if (name != null && !name.isEmpty())
+                pstmt.setString(index++, "%" + name + "%");
+            if (description != null && !description.isEmpty())
+                pstmt.setString(index++, description);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return buildJsonData(rs, id);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "{\"error\":\"Database error\"}";
+        }
+    }
+
+    public String buildJsonData(ResultSet rs, String id) throws SQLException {
+        StringBuilder jsonData = new StringBuilder();
+        if (id != null && !id.isEmpty() && rs.next()) {
+            jsonData.append("{")
+                    .append("\"id\":\"").append(rs.getInt("id")).append("\", ")
+                    .append("\"name\":\"").append(rs.getString("name")).append("\", ")
+                    .append("\"description\":\"").append(rs.getString("description"))
+                    .append("\"}");
+        } else {
+            jsonData.append("[");
+            while (rs.next()) {
+                jsonData.append("{")
+                        .append("\"id\":\"").append(rs.getInt("id")).append("\", ")
+                        .append("\"name\":\"").append(rs.getString("name")).append("\", ")
+                        .append("\"description\":\"").append(rs.getString("description"))
+                        .append("\"},");
+            }
+            if (jsonData.length() > 1) {
+                jsonData.setLength(jsonData.length() - 1); // Remove last comma
+            }
+            jsonData.append("]");
+        }
+
+        return jsonData.toString();
     }
 }

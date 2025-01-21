@@ -55,7 +55,6 @@ public class RecoverGroupServlet extends HttpServlet {
                         accountNames.add(rs.getString("AccountName"));
                         organizations.add(rs.getString("Organization"));
                     }
-
                     if(oldValues.isEmpty()){
                         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                         response.getWriter().write("{\"error\": \"No matching records found\"}");
@@ -92,7 +91,7 @@ public class RecoverGroupServlet extends HttpServlet {
                         StringBuilder output = new StringBuilder();
                         try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                             String line;
-                            while ((line = reader.readLine()) != null) {
+                            while((line = reader.readLine()) != null) {
                                 output.append(line).append("\n");
                             }
                         }

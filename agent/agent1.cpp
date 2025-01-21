@@ -351,16 +351,24 @@ void processOUEntry(LDAP* ld, LDAPMessage* entry) {
         }
     }
 }
+
 void fetchOUData(const char* base_dn) {
-    string combinedFilter;
     if (!initialFetch) {
-        string timeFilter = "(whenChanged>=" + getLDAPTimeString(lastCheckedTime) + ")";
+        timeFilter = "(whenChanged>=" + getLDAPTimeString(lastCheckedTime) + ")";
         combinedFilter = "(&(objectClass=organizationalUnit)" + timeFilter + ")";
     } else {
         combinedFilter = "(objectClass=organizationalUnit)";
     }
-    const char* ou_attributes[] = {"ou", "description", "whenChanged", "streetAddress", "postOfficeBox", "l", "st", "postalCode", "co", NULL};
-    dataTraverse(base_dn, combinedFilter.c_str(), ou_attributes, processOUEntry);
+    const char* ou_attributes[] = {"ou", "description", "whenChanged", NULL};
+    dataTraverse(base_dn,combinedFilter.c_str(), ou_attributes, processOUEntry);
+    if(!ouData.empty() && !servletSend){
+        ouData.pop_back();
+        sendDataToServlet(URL+"/ComputerDataServlet", ouData);
+        cout << "Computer data sent to ComputerDataServlet: " << ouData << endl;
+        servletSend = true;
+        ouData = "";
+
+    }
 }
 void processDeletedObjectEntry(LDAP* ld, LDAPMessage* entry) {
     string objectType, objectName, objectDescription;
@@ -500,14 +508,14 @@ void fetchOu(){
 }
 int main(){
     ldapBind(); 
-    fetchOu();
+    // fetchOu();
     while(true){
         fetchDeletedObjects(dlt_base_dn);
-        fetchFromComputers(comp_base_dn);
-        fetchFromUsers(user_base_dn);
-        for(string ou_base_dn : ou_names){
-            fetchFromOU(ou_base_dn.c_str());
-        }
+        // fetchFromComputers(comp_base_dn);
+        // fetchFromUsers(user_base_dn);
+        // for(string ou_base_dn : ou_names){
+        //     fetchFromOU(ou_base_dn.c_str());
+        // }
         lastCheckedTime = time(nullptr);
         initialFetch = false;        
         sleep(120);

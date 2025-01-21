@@ -72,7 +72,7 @@ void sendDataToJavaServlet(const Entry& entry) {
 }
 
 int main() {
-    string remoteHost = "192.168.243.71";
+    string remoteHost = "192.168.168.72";
     string username = "Administrator";
     string password = "Ram@123";
 

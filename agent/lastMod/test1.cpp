@@ -5,12 +5,13 @@
 #include <algorithm>
 #include <fstream>
 using namespace std;
-string trim(const string& str) {
+
+string trim(const string& str){
     size_t first = str.find_first_not_of(" \t\n\r+");
     size_t last = str.find_last_not_of(" \t\n\r+");
     return (first == string::npos || last == string::npos) ? "" : str.substr(first, last - first + 1);
 }
-string convertDateFormat(const string& input) {
+string convertDateFormat(const string& input){
     tm t = {};
     istringstream ss(trim(input));
     ss >> get_time(&t, "%m/%d/%Y %I:%M:%S %p");
@@ -58,7 +59,7 @@ void sendDataToJavaServlet(const string& timeCreated, const string& objectName, 
     }
 }
 int main(){
-    string remoteHost = "192.168.219.71";
+    string remoteHost = "192.168.168.72";
     string username = "Administrator";
     string password = "Ram@123"; 
     string psScript = R"(
@@ -154,32 +155,32 @@ int main(){
             objectName = trim(objectName);
             validEntry = true;
         } 
-        else if (line.find("Account Domain") != string::npos) {
+        else if (line.find("Account Domain") != string::npos){
             accountDomain = line.substr(line.find(":") + 1);
             accountDomain = trim(accountDomain);
         }
-        else if (line.find("Old Value") != string::npos) {
+        else if (line.find("Old Value") != string::npos){
             oldValue = line.substr(line.find(":") + 1);
             oldValue = trim(oldValue);
         }
-        else if (line.find("New Value") != string::npos) {
+        else if (line.find("New Value") != string::npos){
             newValue = line.substr(line.find(":") + 1);
             newValue = trim(newValue);
         }
-        else if (line.find("Modified Time") != string::npos) {
+        else if (line.find("Modified Time") != string::npos){
             modifiedTime = line.substr(line.find(":") + 1);
             modifiedTime = trim(modifiedTime);
             modifiedTime = convertDateFormat(modifiedTime);
         }
-        else if (line.find("Changed On") != string::npos) {
+        else if (line.find("Changed On") != string::npos){
             changedOn = line.substr(line.find(":") + 1);
             changedOn = trim(changedOn);
         }  
-        else if (line.find("Organization") != string::npos) {
+        else if (line.find("Organization") != string::npos){
             organization = line.substr(line.find(":") + 1);
             organization = trim(organization);
         }
-        else if (line.find("Message") != string::npos) {
+        else if (line.find("Message") != string::npos){
             message = line.substr(line.find(":") + 1);
             message = trim(message);
             if (validEntry) {
@@ -193,10 +194,10 @@ int main(){
                 cout << "Organization: " << organization << endl;
                 if (!objectName.empty() && !accountDomain.empty() && !oldValue.empty() && !newValue.empty() && !modifiedTime.empty() && !message.empty() && !changedOn.empty() && !organization.empty()) {
                     sendDataToJavaServlet(modifiedTime, objectName, accountDomain, oldValue, newValue, message, changedOn, organization);
-                } else {
+                } 
+                else{
                     cerr << "Required fields are missing. Data not sent to Java Servlet." << endl;
                 }
-                
                 validEntry = false;
             }
         }

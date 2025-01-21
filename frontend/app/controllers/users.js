@@ -219,7 +219,7 @@ export default class UsersController extends Controller {
   @action
   async createUser(event) {
     event.preventDefault();
-    if (!this.firstName || !this.lastName || !this.displayName || !this.logOnName || !this.mail || !this.description || !this.telephoneNumber || !this.accountName || !this.timeCreated) {
+    if (!this.firstName || !this.lastName || !this.displayName || !this.logOnName || !this.mail || !this.description || !this.telephoneNumber) {
       alert('All fields are required!');
       return;
     }
