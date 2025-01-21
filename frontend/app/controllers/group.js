@@ -99,44 +99,98 @@
       this.recoverTimeCreated = event.target.value;
     }
   
-    @action
-    async recoverUser(event) {
-      console.log('Recover user:', this.recoverAccountName, this.recoverTimeCreated);
-      event.preventDefault();
-      if (!this.recoverAccountName || !this.recoverTimeCreated) {
-        alert('All fields are required!');
-        return;
-      }
-      try {
-        const recoverData = new URLSearchParams();
-        recoverData.append('recoverAccountName', this.recoverAccountName);
-        recoverData.append('recoverTimeCreated', this.recoverTimeCreated);
+    // @action
+    // async recoverUser(event) {
+    //   console.log('Recover user:', this.recoverAccountName, this.recoverTimeCreated);
+    //   event.preventDefault();
+    //   if (!this.recoverAccountName || !this.recoverTimeCreated) {
+    //     alert('All fields are required!');
+    //     return;
+    //   }
+    //   try {
+    //     const recoverData = new URLSearchParams();
+    //     recoverData.append('recoverAccountName', this.recoverAccountName);
+    //     recoverData.append('recoverTimeCreated', this.recoverTimeCreated);
     
-        const response = await fetch(
-          'http://localhost:8080/backend_war_exploded/RecoverGroupServlet',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': 'Bearer token', 
-            },
-            body: recoverData,
-          },
-        );
-        console.log('Recover user response:', response);
-        const result = await response.json();
-        console.log('Recover user response:', result);
-        if (result.status === 'success') {
-          this.fetchUsers();
-          this.closeRecoverPopup();
-        } else {
-          // this.recoverUserError = 'Failed to recover user!';
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        // this.recoverUserError = 'Failed to recover user!';
-      }
+    //     const response = await fetch(
+    //       'http://localhost:8080/backend_war_exploded/RecoverGroupServlet',
+    //       {
+    //         method: 'POST',
+    //         headers: {
+    //           'Content-Type': 'application/x-www-form-urlencoded',
+    //           'Authorization': 'Bearer token', 
+    //         },
+    //         body: recoverData,
+    //       },
+    //     );
+    //     console.log('Recover user response:', response);
+    //     const result = await response.json();
+    //     console.log('Recover user response:', result);
+    //     if (result.status === 'success') {
+    //       this.fetchUsers();
+    //       this.closeRecoverPopup();
+    //     } else {
+    //       // this.recoverUserError = 'Failed to recover user!';
+    //     }
+    //   } catch (error) {
+    //     console.error('Error:', error);
+    //     // this.recoverUserError = 'Failed to recover user!';
+    //   }
+    // }
+
+    @action
+async recoverUser(event) {
+  console.log('Recover user:', this.recoverAccountName, this.recoverTimeCreated);
+  event.preventDefault();
+  if (!this.recoverAccountName || !this.recoverTimeCreated) {
+    alert('All fields are required!');
+    return;
+  }
+
+  const currentTime = new Date();
+  const recoverTime = new Date(this.recoverTimeCreated);
+  console.log('Current time:', currentTime);
+  if(recoverTime > currentTime){
+    alert('Enter valid time');
+    return;
+  }
+  try {
+    const recoverData = new URLSearchParams();
+    recoverData.append('recoverAccountName', this.recoverAccountName);
+    recoverData.append('recoverTimeCreated', this.recoverTimeCreated);
+    
+    const response = await fetch(
+      'http://localhost:8080/backend_war_exploded/RecoverGroupServlet',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer token', 
+        },
+        body: recoverData,
+      },
+    );
+
+    if (response.status === 404) {
+      alert('No matching records found');
+      return;
     }
+    console.log('Recover user response:', response);
+    const result = await response.json();
+    console.log('Recover user response----:', result);
+    if (result[0]?.status == 'success') {
+      alert('User recovered successfully');
+      this.closeRecoverPopup();
+    } 
+    else{
+      this.recoverUserError = 'Failed to recover user!';
+    }
+  } 
+  catch (error) {
+    console.error('Error:', error);   
+    this.recoverUserError = 'Failed to recover user---->!';
+  }
+}
   
 
     @action

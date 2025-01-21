@@ -37,11 +37,13 @@ public class RecoverUserServlet extends HttpServlet {
             return;
         }
         try (Connection conn = DBConnection.getConnection()) {
-            String query = "SELECT OldValue, changedOn, AccountName, Organization FROM logs WHERE AccountName = ? AND TimeCreated = ?";
+//            String query = "select OldValue, changedOn, AccountName, Organization from logs where AccountName = ? and TimeCreated >= ?";
+            String query = "select l1.changedOn, l1.OldValue , l1.AccountName, l1.Organization from logs l1 where l1.TimeCreated=(select MIN(l2.TimeCreated) from logs l2 where l2.changedOn = l1.changedOn and l2.TimeCreated >= ? and l2.accountName = l1.accountName) and l1.changedOn in ('description', 'mail', 'givenName') and l1.accountName = ? order by l1.changedOn;" ;
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                stmt.setString(1, recoverAccountName);
-                stmt.setString(2, recoverTimeCreated);
-                try (ResultSet rs = stmt.executeQuery()) {
+                stmt.setString(1, recoverTimeCreated);
+                stmt.setString(2, recoverAccountName);
+
+                try (ResultSet rs = stmt.executeQuery()){
                     ArrayList<String> oldValues = new ArrayList<>();
                     ArrayList<String> changedOns = new ArrayList<>();
                     ArrayList<String> accountNames = new ArrayList<>();
@@ -83,7 +85,7 @@ public class RecoverUserServlet extends HttpServlet {
                             writer.write("\n");
                         }
 
-//                        System.out.println(oldValue + "--" + changedOn + "--" + accountName + "--" + organization);
+                        System.out.println(oldValue + "--" + changedOn + "--" + accountName + "--" + organization);
                         String[] cmd = {executablePath, accountName, changedOn, oldValue};
                         Process process = Runtime.getRuntime().exec(cmd);
                         StringBuilder output = new StringBuilder();

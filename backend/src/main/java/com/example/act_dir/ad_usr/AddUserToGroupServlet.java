@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 public class AddUserToGroupServlet extends HttpServlet {
-
     @Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         addCorsHeaders(response);
@@ -21,15 +20,11 @@ public class AddUserToGroupServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         addCorsHeaders(response);
-
         try (JsonReader jsonReader = Json.createReader(request.getInputStream())) {
             JsonObject json = jsonReader.readObject();
-
             String groupName = json.getString("groupName");
             String userName = json.getString("userName");
-
             String resultMessage = addUserToGroup(groupName, userName);
-
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             JsonObject jsonResponse = Json.createObjectBuilder()
@@ -60,7 +55,6 @@ public class AddUserToGroupServlet extends HttpServlet {
             ProcessBuilder processBuilder = new ProcessBuilder("/home/ram-pt7749/Music/prom/agent/ad_usr/addUserToGroup", groupName, userName);
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
-
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             StringBuilder output = new StringBuilder();
             String line;

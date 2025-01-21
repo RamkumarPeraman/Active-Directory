@@ -150,8 +150,6 @@ body {
   padding-bottom: 5px;
   margin-top: 2px;
   max-width: 50px;
-
-  /* border: none; */
 }
 
 .groups_icon {
@@ -175,7 +173,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* overflow: scroll; */
 }
 
 .popup-content {
@@ -228,8 +225,6 @@ body {
 
 .search-options {
   text-align: right;
-
-  /* position: absolute; */
   margin-left: 67%;
   flex: 1;
 }
@@ -447,5 +442,3 @@ button[type="submit"]:active {
   background-color: #f5f7d9;
   cursor: pointer;
 }
-
-

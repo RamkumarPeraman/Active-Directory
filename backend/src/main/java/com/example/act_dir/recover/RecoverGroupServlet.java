@@ -31,16 +31,19 @@ public class RecoverGroupServlet extends HttpServlet {
         }
         String recoverAccountName = request.getParameter("recoverAccountName");
         String recoverTimeCreated = request.getParameter("recoverTimeCreated");
+        System.out.println(recoverAccountName +"------------"+recoverTimeCreated);
         if (recoverAccountName == null || recoverTimeCreated == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"error\": \"Missing parameters\"}");
             return;
         }
         try (Connection conn = DBConnection.getConnection()) {
-            String query = "SELECT OldValue, changedOn, AccountName, Organization FROM logs WHERE AccountName = ? AND TimeCreated = ?";
+//            String query = "SELECT OldValue, changedOn, AccountName, Organization FROM logs WHERE AccountName = ? AND TimeCreated = ?";
+            String query = "select l1.changedOn, l1.OldValue , l1.AccountName, l1.Organization from logs l1 where l1.TimeCreated=(select MIN(l2.TimeCreated) from logs l2 where l2.changedOn = l1.changedOn and l2.TimeCreated >= ? and l2.accountName = l1.accountName) and l1.changedOn in ('description', 'mail', 'givenName') and l1.accountName = ? order by l1.changedOn;" ;
+
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                stmt.setString(1, recoverAccountName);
-                stmt.setString(2, recoverTimeCreated);
+                stmt.setString(1, recoverTimeCreated);
+                stmt.setString(2, recoverAccountName);
                 try (ResultSet rs = stmt.executeQuery()) {
                     ArrayList<String> oldValues = new ArrayList<>();
                     ArrayList<String> changedOns = new ArrayList<>();

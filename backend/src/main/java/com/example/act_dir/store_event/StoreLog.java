@@ -94,8 +94,8 @@ public class StoreLog extends HttpServlet {
             checkStmt.setString(1, timeCreated);
             checkStmt.setString(2, accountName);
             checkStmt.setString(3, accountDomain);
-            checkStmt.setString(4, newValue);
-            checkStmt.setString(5, oldValue);
+            checkStmt.setString(4, oldValue);
+            checkStmt.setString(5, newValue);
             checkStmt.setString(6, message);
             checkStmt.setString(7,ChangedOn);
             checkStmt.setString(8, Organization);
@@ -111,8 +111,8 @@ public class StoreLog extends HttpServlet {
             insertStmt.setString(1, timeCreated);
             insertStmt.setString(2, accountName);
             insertStmt.setString(3, accountDomain);
-            insertStmt.setString(4, newValue);
-            insertStmt.setString(5, oldValue);
+            insertStmt.setString(4, oldValue);
+            insertStmt.setString(5, newValue);
             insertStmt.setString(6, message);
             insertStmt.setString(7, ChangedOn);
             insertStmt.setString(8, Organization);

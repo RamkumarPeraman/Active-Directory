@@ -261,7 +261,6 @@ void processOUEntry(LDAP* ld, LDAPMessage* entry) {
 
     values = ldap_get_values_len(ld, entry, "co");
     dataAddToVal(values, country);
-
     time_t ouLastModTime = getLastModificationTime(ld, entry);
     string dn = ldap_get_dn(ld, entry);
     if (initialFetch || (ouLastModTime > lastCheckedTime && processedEntries.find(dn) == processedEntries.end())) {

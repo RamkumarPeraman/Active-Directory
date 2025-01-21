@@ -92,7 +92,7 @@ import java.text.SimpleDateFormat;
 public class FetchUserLog extends HttpServlet {
 
     public static String fetchUserLogs(String accountName) {
-        String query = "SELECT * FROM logs WHERE AccountName = ? order by TimeCreated desc";
+        String query = "SELECT * FROM logs WHERE AccountName = ? order by TimeCreated";
         JSONArray jsonResponse = new JSONArray();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
