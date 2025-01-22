@@ -11,7 +11,6 @@
 #include <string>
 #include <array>
 using namespace std;
-
 struct Entry{
     string objectName;
     string accountDomain;
@@ -72,16 +71,16 @@ void sendDataToJavaServlet(const Entry& entry){
     }
 }
 
-using PcloseFunctionType = int(*)(FILE*);
+using fAliasType = int(*)(FILE*);
 
 string executeCommand(const string& command) {
     array<char, 128> buffer{};
     string result;
-    unique_ptr<FILE, PcloseFunctionType> pipe(popen(command.c_str(), "r"), pclose);
-    if (!pipe) {
+    unique_ptr<FILE, fAliasType> pipe(popen(command.c_str(), "r"), pclose);
+    if(!pipe){
         throw runtime_error("popen() failed!");
     }
-    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+    while(fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr){
         result += buffer.data();
     }
     return result;
@@ -94,14 +93,11 @@ int main() {
 
     string psScript = R"(
         $users = Get-ADUser -Filter * -Properties description, mail, givenName
-        foreach ($user in $users) {
+        foreach($user in $users){
             $name = $user.SamAccountName
             $mail = $user.mail
             $firstName = $user.givenName
-            Write-Host 'User: ' $name
-            Write-Host 'Mail: ' $mail
-            Write-Host 'First Name: ' $firstName
-            Write-Host 'Fetching event log entries for user: ' $name
+
             Get-EventLog -LogName Security -InstanceId 5136 | ForEach-Object {
                 $event = $_
                 $message = $event.Message
@@ -109,7 +105,7 @@ int main() {
                 $changedOn = $null
                 $organization = $null
                 Write-Host 'Processing event: ' $message
-                if ($message -match 'LDAP Display Name:\s(description|mail|givenName|'')'){
+                if ($message -match 'LDAP Display Name:\s(description|mail|givenName)'){
                     $changedOn = $matches[1]
                     Write-Host "Changed On: $changedOn"
                     if ($message -match 'Value:\s*(.*?)\r'){
@@ -158,6 +154,7 @@ int main() {
             }
         }
     )";
+
     ofstream scriptFile("script.ps1");
     scriptFile << psScript;
     scriptFile.close();
@@ -174,34 +171,40 @@ int main() {
     string line;
     string objectName, accountDomain, oldValue, newValue, modifiedTime, message, changedOn, organization;
     bool validEntry = false;
-
-    while (getline(output, line)) {
-        if (line.find("User:") != string::npos) {
+    while(getline(output, line)) {
+        if (line.find("User:") != string::npos){
             validEntry = false;
         }
-        if (line.find("objectName") != string::npos) {
+        if(line.find("objectName") != string::npos){
             objectName = trim(line.substr(line.find(":") + 1));
             validEntry = true;
-        } else if (line.find("Account Domain") != string::npos) {
+        } 
+        else if (line.find("Account Domain") != string::npos){
             accountDomain = trim(line.substr(line.find(":") + 1));
-        } else if (line.find("Old Value") != string::npos) {
+        } 
+        else if (line.find("Old Value") != string::npos){
             oldValue = trim(line.substr(line.find(":") + 1));
-        } else if (line.find("New Value") != string::npos) {
+        } 
+        else if (line.find("New Value") != string::npos){
             newValue = trim(line.substr(line.find(":") + 1));
-        } else if (line.find("Modified Time") != string::npos) {
+        }
+        else if (line.find("     Time") != string::npos){
             modifiedTime = convertDateFormat(trim(line.substr(line.find(":") + 1)));
-        } else if (line.find("Changed On") != string::npos) {
+        } 
+        else if (line.find("Changed On") != string::npos){
             changedOn = trim(line.substr(line.find(":") + 1));
-        } else if (line.find("Organization") != string::npos) {
+        } 
+        else if (line.find("Organization") != string::npos){
             organization = trim(line.substr(line.find(":") + 1));
-        } else if (line.find("Message") != string::npos) {
+        } 
+        else if (line.find("Message") != string::npos){
             message = trim(line.substr(line.find(":") + 1));
-            if (validEntry) {
-                if (entries.find(modifiedTime) != entries.end()) {
-                    if (entries[modifiedTime].oldValue.empty()) {
+            if (validEntry){
+                if (entries.find(modifiedTime) != entries.end()){
+                    if(entries[modifiedTime].oldValue.empty()) {
                         entries[modifiedTime].oldValue = oldValue;
                     }
-                    if (entries[modifiedTime].newValue.empty()) {
+                    if(entries[modifiedTime].newValue.empty()) {
                         entries[modifiedTime].newValue = newValue;
                     }
                 } else {
@@ -211,16 +214,16 @@ int main() {
             }
         }
     }
-    for (const auto& pair : entries) {
+    for(const auto& pair : entries){
         const Entry& entry = pair.second;
         cout << "objectName: " << entry.objectName << endl;
         cout << "Account Domain: " << entry.accountDomain << endl;
         cout << "Old Value: " << entry.oldValue << endl;
         cout << "New Value: " << entry.newValue << endl;
-        cout << "Modified Time: " << entry.modifiedTime << endl;        cout << "Message: " << entry.message << endl;
+        cout << "Modified Time: " << entry.modifiedTime << endl;        
+        cout << "Message: " << entry.message << endl;
         cout << "Changed On: " << entry.changedOn << endl;
         cout << "Organization: " << entry.organization << endl;
-
         if(!entry.objectName.empty() && !entry.accountDomain.empty() && !entry.modifiedTime.empty() && !entry.message.empty() && !entry.changedOn.empty() && !entry.organization.empty() && !entry.oldValue.empty() && !entry.newValue.empty() && entry.oldValue != entry.newValue){
             sendDataToJavaServlet(entry);
         } 
@@ -228,7 +231,5 @@ int main() {
             cerr << "Required fields are missing. Data not sent to Java Servlet." << endl;
         }
     }
-    string cleanupCommand = "sshpass -p '" + password + "' ssh " + username + "@" + remoteHost + " powershell.exe -Command \\\"Remove-Item -Path 'C:\\temp\\script.ps1' -Force\\\"";
-    system(cleanupCommand.c_str());
     return 0;
 }

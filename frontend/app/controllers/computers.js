@@ -28,6 +28,7 @@ export default class ComputerController extends Controller {
   @tracked recoverAccountName = '';
   @tracked recoverTimeCreated = '';
   @tracked recoverUserError = '';
+  @tracked objCreatedAt = '';
 
   constructor() {
     super(...arguments);
@@ -96,32 +97,33 @@ export default class ComputerController extends Controller {
       const computerDetails = await response.json();
       this.computerDetails = computerDetails.computers;
       this.isComputerDetailsPopupVisible = true;
-    } catch (error) {
+    } 
+    catch (error){
       console.error('Error fetching computers for the day:', error);
     }
     console.log('hi',this.computerDetails);
   }
 
   @action
-  closeComputerDetailsPopup() {
+  closeComputerDetailsPopup(){
     this.isComputerDetailsPopupVisible = false;
     this.computerDetails = [];
   }
-
-
   @action
   async showComputerDetails(computerName) {
-    try {
+    try{
       const response = await fetch(
         `http://localhost:8080/backend_war_exploded/FetchComputerData?computerName=${computerName}`,
       );
-      if (!response.ok) {
+      if(!response.ok){
         throw new Error(
           `Failed to fetch computer details: ${response.statusText}`,
         );
       }
       this.selectedComputer = await response.json();
-    } catch (error) {
+      this.objCreatedAt = this.selectedComputer.whenCreated;
+    }
+    catch (error) {
       console.error('Error fetching computer details:', error);
       this.selectedComputer = null;
     }
@@ -170,47 +172,6 @@ export default class ComputerController extends Controller {
   updateRecoverTimeCreated(event) {
     this.recoverTimeCreated = event.target.value;
   }
-
-  // @action
-  // async recoverUser(event) {
-  //   console.log('Recover user:', this.recoverAccountName, this.recoverTimeCreated);
-  //   event.preventDefault();
-  //   if (!this.recoverAccountName || !this.recoverTimeCreated) {
-  //     alert('All fields are required!');
-  //     return;
-  //   }
-  //   try {
-  //     const recoverData = new URLSearchParams();
-  //     recoverData.append('recoverAccountName', this.recoverAccountName);
-  //     recoverData.append('recoverTimeCreated', this.recoverTimeCreated);
-  
-  //     const response = await fetch(
-  //       'http://localhost:8080/backend_war_exploded/RecoverComputerServlet',
-  //       {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/x-www-form-urlencoded',
-  //           'Authorization': 'Bearer token', 
-  //         },
-  //         body: recoverData,
-  //       },
-  //     );
-  //     console.log('Recover user response:', response);
-  //     const result = await response.json();
-  //     console.log('Recover user response:', result);
-  //     if (result.status === 'success') {
-  //       this.fetchUsers();
-  //       this.closeRecoverPopup();
-  //     } else {
-  //       // this.recoverUserError = 'Failed to recover user!';
-  //     }
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //     // this.recoverUserError = 'Failed to recover user!';
-  //   }
-  // }
-
-
   @action
 async recoverUser(event) {
   console.log('Recover user:', this.recoverAccountName, this.recoverTimeCreated);
@@ -220,11 +181,29 @@ async recoverUser(event) {
     return;
   }
 
+  await this.showComputerDetails(this.recoverAccountName);
+  const createTime = new Date(this.objCreatedAt);
+  console.log('Create time:', createTime);
   const currentTime = new Date();
   const recoverTime = new Date(this.recoverTimeCreated);
   console.log('Current time:', currentTime);
+  
+  // if(this.recoverTimeCreated.length < 19){
+  //   alert('Entered time is not in correct format');
+  //   return;
+  // }
+
+
+  if(!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(this.recoverTimeCreated)) {
+    alert('Entered time is not in the correct format. Please use YYYY-MM-DD HH:MM:SS');
+    return;
+  }
   if(recoverTime > currentTime){
-    alert('Enter valid time');
+    alert('Entered time is future time');
+    return;
+  }
+  else if(recoverTime < createTime){
+    alert('This Computer is not created at this time, Enter time after '+ this.objCreatedAt);
     return;
   }
   try {
@@ -244,8 +223,8 @@ async recoverUser(event) {
       },
     );
 
-    if (response.status === 404) {
-      alert('No matching records found');
+    if(response.status === 404) {
+      alert('No modification records found');
       return;
     }
     console.log('Recover user response:', response);
@@ -256,12 +235,12 @@ async recoverUser(event) {
       this.closeRecoverPopup();
     } 
     else{
-      this.recoverUserError = 'Failed to recover user!';
+      this.recoverUserError = 'Failed to recover computer!';
     }
   } 
   catch (error) {
     console.error('Error:', error);   
-    this.recoverUserError = 'Failed to recover user---->!';
+    this.recoverUserError = 'Failed to recover computer---->!';
   }
 }
 
@@ -340,6 +319,8 @@ async recoverUser(event) {
       const result = await response.json();
       if (result.status === 'success') {
         this.fetchComputers();
+        alert('Computer created successfully!');
+
         this.closeNewComputerPopup();
       } else {
         this.createComputerError =

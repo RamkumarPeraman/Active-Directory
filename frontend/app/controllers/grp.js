@@ -24,12 +24,10 @@
     @tracked createGroupError = '';
     @tracked groupCreationData = {};
     @tracked groupDetails = [];
-
     constructor() {
       super(...arguments);
       this.fetchGroups();
     }
-
     @action
     async fetchGroups(params = {}) {
       params.sortBy = this.sortBy;

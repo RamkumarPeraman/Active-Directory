@@ -38,7 +38,7 @@ public class RecoverUserServlet extends HttpServlet {
         }
         try (Connection conn = DBConnection.getConnection()) {
 //            String query = "select OldValue, changedOn, AccountName, Organization from logs where AccountName = ? and TimeCreated >= ?";
-            String query = "select l1.changedOn, l1.OldValue , l1.AccountName, l1.Organization from logs l1 where l1.TimeCreated=(select MIN(l2.TimeCreated) from logs l2 where l2.changedOn = l1.changedOn and l2.TimeCreated >= ? and l2.accountName = l1.accountName) and l1.changedOn in ('description', 'mail', 'givenName') and l1.accountName = ? order by l1.changedOn;" ;
+            String query = "select l1.changedOn, l1.OldValue , l1.AccountName, l1.Organization from logs l1 where l1.TimeCreated=(select MIN(l2.TimeCreated) from logs l2 where l2.changedOn = l1.changedOn and l2.TimeCreated >= ? and l2.accountName = l1.accountName) and l1.changedOn in ('description', 'mail', 'givenName') and l1.accountName = ?;" ;
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, recoverTimeCreated);
                 stmt.setString(2, recoverAccountName);

@@ -1,6 +1,7 @@
 
 
 <div class="group-grid">
+    <div class="head_name"></div>
   <h1 class="heading">Groups</h1>
   
   <div class="search-options">
@@ -20,7 +21,7 @@
     </select>
   </div>
 
-  <p class="total-count">Total: <b>{{this.totalCount}}</b></p>
+  <p class="total-count">Total : <b>{{this.totalCount}}</b></p>
 
   <button class="new-button" type="button" {{on "click" this.openNewGroupPopup}}>New Group</button>
   <button class="add-user-button" type="button" {{on "click" this.openAddUserPopup}}>Add Group Members</button>
@@ -70,13 +71,13 @@
         <h2>Create New Group</h2>
         <form {{on "submit" this.createGroup}}>
           <label for="newGroupName">Group Name:</label>
-          <input type="text" id="newGroupName" name="newGroupName" value={{this.newGroupName}} {{on "input" this.updateNewGroupName}} required />
+          <input type="text" id="newGroupName" name="newGroupName" placeholder="eg : Todo" value={{this.newGroupName}} {{on "input" this.updateNewGroupName}} required />
 
           <label for="newGroupDescription">Description:</label>
-          <input type="text" id="newGroupDescription" name="newGroupDescription" value={{this.newGroupDescription}} {{on "input" this.updateNewGroupDescription}} required />
+          <input type="text" id="newGroupDescription" name="newGroupDescription" placeholder="Enter new description" value={{this.newGroupDescription}} {{on "input" this.updateNewGroupDescription}} required />
 
           <label for="newGroupMail">Mail:</label>
-          <input type="email" id="newGroupMail" name="newGroupMail" value={{this.newGroupMail}} {{on "input" this.updateNewGroupMail}} required />
+          <input type="email" id="newGroupMail" name="newGroupMail" placeholder="Enter new mail" value={{this.newGroupMail}} {{on "input" this.updateNewGroupMail}} required />
 
           <button type="submit">Create Group</button>
         </form>
@@ -96,7 +97,7 @@
         <h2>Recover User</h2>
         <form {{on "submit" this.recoverUser}}>
           <label for="recoverAccountName">Account Name:</label>
-          <input type="text" id="recoverAccountName" name="recoverAccountName" value={{this.recoverAccountName}} {{on "input" this.updateRecoverAccountName}} required />
+          <input type="text" id="recoverAccountName" name="recoverAccountName" placeholder="eg : Todo" value={{this.recoverAccountName}} {{on "input" this.updateRecoverAccountName}} required />
 
           <label for="recoverTimeCreated">Time Created:</label>
           <input type="text" id="recoverTimeCreated" name="recoverTimeCreated" placeholder="YYYY-MM-DD HH:MM:SS" value={{this.recoverTimeCreated}} {{on "input" this.updateRecoverTimeCreated}} required />
@@ -119,10 +120,10 @@
         <h2>Add Members</h2>
         <form {{on "submit" this.addUserToGroup}}>
           <label for="userName">User Name:</label>
-          <input type="text" id="userName" name="userName" value={{this.userName}} {{on "input" this.updateUserName}} required />
+          <input type="text" id="userName" name="userName" placeholder="Enter user name" value={{this.userName}} {{on "input" this.updateUserName}} required />
 
           <label for="groupName">Group Name:</label>
-          <input type="text" id="groupName" name="groupName" value={{this.groupName}} {{on "input" this.updateGroupName}} required />
+          <input type="text" id="groupName" name="groupName" placeholder="Enter group name" value={{this.groupName}} {{on "input" this.updateGroupName}} required />
 
           <button type="submit">Add User</button>
         </form>

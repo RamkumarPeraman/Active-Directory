@@ -5,13 +5,12 @@
 #include "../ldap_config.h"
 
 using namespace std;
-
 LDAP* ld;
 int rc;
 void ldapBind() {
     rc = ldap_initialize(&ld, ldap_server);
     if (rc != LDAP_SUCCESS) {
-        cerr << "Failed to initialize LDAP connection: " << ldap_err2string(rc) << endl;
+        cerr << "Failed to initialize LDAP connection: " << ldap_err2string(rc)<<endl;
         exit(EXIT_FAILURE);
     }
     int ldap_version = LDAP_VERSION3;
@@ -26,7 +25,7 @@ void ldapBind() {
         exit(EXIT_FAILURE);
     }
 }
-void modify_attribute(LDAP* ldap_handle, const char* dn, const char* attribute, const char* new_value) {
+void modify_attribute(LDAP* ldap_handle, const char* dn, const char* attribute, const char* new_value){
     LDAPMod mod;
     LDAPMod* mods[2];
     mod.mod_op = LDAP_MOD_REPLACE;

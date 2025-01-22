@@ -2,6 +2,23 @@
     <div value="" class="head_name">
   </div>
   <h1 class="heading">Organizational Units</h1>
+    <div class="search-options">
+    <div class="search-wrapper">
+      <img src="../asset/search.png" alt="user" class="search_icon" />
+      <input type="text" id="search" name="search" placeholder="Search by ou..." value='' />
+    </div>
+  </div>
+
+  <div class="sort-options">
+    <label for="sort">Sort by:</label>
+    <select id="sort" name="sort">
+      <option value="asc-desc">Ascending - Descending</option>
+      <option value="desc-asc">Descending - Ascending</option>
+      <option value="new-old">New - Old</option>
+      <option value="old-new">Old - New</option>
+    </select>
+  </div>
+  <p class="total-count">Total: <b>1</b></p>
   <div class="tiles">
     {{#each this.ous as |ou|}}
       <div class="tile">

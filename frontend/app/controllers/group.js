@@ -3,7 +3,6 @@
   import { tracked } from '@glimmer/tracking';
   // import Chart from 'chart.js/auto';
 
-
   export default class GroupController extends Controller {
     @tracked groups = [];
     @tracked selectedGroup = null;
@@ -33,6 +32,7 @@
     @tracked recoverAccountName = '';
     @tracked recoverTimeCreated = '';
     @tracked recoverUserError = '';
+    @tracked objCreatedAt = '';
 
     constructor() {
       super(...arguments);
@@ -98,99 +98,75 @@
     updateRecoverTimeCreated(event) {
       this.recoverTimeCreated = event.target.value;
     }
-  
-    // @action
-    // async recoverUser(event) {
-    //   console.log('Recover user:', this.recoverAccountName, this.recoverTimeCreated);
-    //   event.preventDefault();
-    //   if (!this.recoverAccountName || !this.recoverTimeCreated) {
-    //     alert('All fields are required!');
-    //     return;
-    //   }
-    //   try {
-    //     const recoverData = new URLSearchParams();
-    //     recoverData.append('recoverAccountName', this.recoverAccountName);
-    //     recoverData.append('recoverTimeCreated', this.recoverTimeCreated);
-    
-    //     const response = await fetch(
-    //       'http://localhost:8080/backend_war_exploded/RecoverGroupServlet',
-    //       {
-    //         method: 'POST',
-    //         headers: {
-    //           'Content-Type': 'application/x-www-form-urlencoded',
-    //           'Authorization': 'Bearer token', 
-    //         },
-    //         body: recoverData,
-    //       },
-    //     );
-    //     console.log('Recover user response:', response);
-    //     const result = await response.json();
-    //     console.log('Recover user response:', result);
-    //     if (result.status === 'success') {
-    //       this.fetchUsers();
-    //       this.closeRecoverPopup();
-    //     } else {
-    //       // this.recoverUserError = 'Failed to recover user!';
-    //     }
-    //   } catch (error) {
-    //     console.error('Error:', error);
-    //     // this.recoverUserError = 'Failed to recover user!';
-    //   }
-    // }
 
     @action
-async recoverUser(event) {
-  console.log('Recover user:', this.recoverAccountName, this.recoverTimeCreated);
-  event.preventDefault();
-  if (!this.recoverAccountName || !this.recoverTimeCreated) {
-    alert('All fields are required!');
-    return;
-  }
+    async recoverUser(event) {
+      console.log('Recover user:', this.recoverAccountName, this.recoverTimeCreated);
+      event.preventDefault();
+      if (!this.recoverAccountName || !this.recoverTimeCreated) {
+        alert('All fields are required!');
+        return;
+      }
+      await this.showGroupDetails(this.recoverAccountName);
+      const currentTime = new Date();
+      const createTime = new Date(this.objCreatedAt);
+      const recoverTime = new Date(this.recoverTimeCreated);
+      console.log('Current time:', currentTime);
 
-  const currentTime = new Date();
-  const recoverTime = new Date(this.recoverTimeCreated);
-  console.log('Current time:', currentTime);
-  if(recoverTime > currentTime){
-    alert('Enter valid time');
-    return;
-  }
-  try {
-    const recoverData = new URLSearchParams();
-    recoverData.append('recoverAccountName', this.recoverAccountName);
-    recoverData.append('recoverTimeCreated', this.recoverTimeCreated);
-    
-    const response = await fetch(
-      'http://localhost:8080/backend_war_exploded/RecoverGroupServlet',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer token', 
-        },
-        body: recoverData,
-      },
-    );
+      // if(this.recoverTimeCreated.length < 19){ 
+      //   alert('Entered time is not in correct format');
+      // return;
+      // }
 
-    if (response.status === 404) {
-      alert('No matching records found');
-      return;
+      if(!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(this.recoverTimeCreated)) {
+        alert('Entered time is not in the correct format. Please use YYYY-MM-DD HH:MM:SS');
+        return;
+      }
+      if(recoverTime > currentTime){
+        alert('Entered time is future time');
+        return;
+      }
+      else if(recoverTime < createTime){
+        alert('This group is not created at this time, Enter time after '+ this.objCreatedAt);
+        return;
+      }
+      try {
+        const recoverData = new URLSearchParams();
+        recoverData.append('recoverAccountName', this.recoverAccountName);
+        recoverData.append('recoverTimeCreated', this.recoverTimeCreated);
+        
+        const response = await fetch(
+          'http://localhost:8080/backend_war_exploded/RecoverGroupServlet',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Authorization': 'Bearer token', 
+            },
+            body: recoverData,
+          },
+        );
+
+        if (response.status === 404) {
+          alert('No modification records found');
+          return;
+        }
+        console.log('Recover user response:', response);
+        const result = await response.json();
+        console.log('Recover user response----:', result);
+        if (result[0]?.status == 'success') {
+          alert('User recovered successfully');
+          this.closeRecoverPopup();
+        } 
+        else{
+          this.recoverUserError = 'Failed to recover group!';
+        }
+      } 
+      catch (error) {
+        console.error('Error:', error);   
+        this.recoverUserError = 'Failed to recover group---->!';
+      }
     }
-    console.log('Recover user response:', response);
-    const result = await response.json();
-    console.log('Recover user response----:', result);
-    if (result[0]?.status == 'success') {
-      alert('User recovered successfully');
-      this.closeRecoverPopup();
-    } 
-    else{
-      this.recoverUserError = 'Failed to recover user!';
-    }
-  } 
-  catch (error) {
-    console.error('Error:', error);   
-    this.recoverUserError = 'Failed to recover user---->!';
-  }
-}
   
 
     @action
@@ -206,6 +182,7 @@ async recoverUser(event) {
 
     @action
     async showGroupsForDay(day) {
+
       console.log('Fetching groups for the day:', day);
       try {
         const response = await fetch(
@@ -238,6 +215,7 @@ async recoverUser(event) {
           throw new Error(`Failed to fetch group details: ${response.statusText}`);
         }
         const group = await response.json();
+        this.objCreatedAt = group.whenCreated;
         // console.log(group);
         this.selectedGroup = {
           name: group.name,
@@ -246,10 +224,11 @@ async recoverUser(event) {
           whenCreated : group.whenCreated || '',
           whenChanged : group.whenChanged || '',
         };
-      } catch (error) {
+      } 
+      catch (error){
         console.error('Error fetching group details:', error);
       }
-      console.log('hi',this.selectedGroup); 
+      // console.log('----------------------------------------',this.selectedGroup); 
     }
 
     @action
@@ -309,7 +288,7 @@ async recoverUser(event) {
 
       new Chart(ctx,{
         type: 'line',
-        data: {
+        data:{
           labels: labels,
           datasets: [{
             label: 'Groups Created',
@@ -363,13 +342,11 @@ async recoverUser(event) {
       this.sortBy = event.target.value;
       this.fetchGroups();
     }
-
     @action
     updateSearchQuery(event) {
       this.searchQuery = event.target.value;
       this.fetchGroups();
     }
-
     @action
     openNewGroupPopup() {
       this.isNewGroupPopupVisible = true;
@@ -386,17 +363,14 @@ async recoverUser(event) {
     updateNewGroupName(event) {
       this.newGroupName = event.target.value;
     }
-
     @action
     updateNewGroupDescription(event) {
       this.newGroupDescription = event.target.value;
     }
-
     @action
     updateNewGroupMail(event) {
       this.newGroupMail = event.target.value;
     }
-
     @action
     async createGroup(event) {
       event.preventDefault();
@@ -405,7 +379,6 @@ async recoverUser(event) {
         alert('All fields are required!');
         return;
       }
-
       try {
         const response = await fetch(
           'http://localhost:8080/backend_war_exploded/CreateGroupServlet',
@@ -421,22 +394,22 @@ async recoverUser(event) {
             }),
           },
         );
-
         const result = await response.json();
         if (result.status === 'success') {
           this.fetchGroups();
+        alert('Group created successfully!');
           this.closeNewGroupPopup();
         } else {
           this.createGroupError = result.message || 'Failed to create group!';
         }
-      } catch (error) {
+      } 
+      catch (error) {
         console.error('Error:', error);
         this.createGroupError = 'Failed to create group!';
       }
     }
-
     @action
-    openAddUserPopup() {
+    openAddUserPopup(){
       this.isAddUserPopupVisible = true;
     }
 
@@ -539,4 +512,3 @@ async recoverUser(event) {
       }
     }
   }
-

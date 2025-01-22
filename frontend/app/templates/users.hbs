@@ -18,7 +18,7 @@
       <option value="old-new">Old - New</option>
     </select>
   </div>
-  <p class="total-count">Total: <b>{{this.totalCount}}</b></p>
+  <p class="total-count">Total : <b>{{this.totalCount}}</b></p>
 
   <button class="new-button" type="button" {{on "click" this.openNewUserPopup}}>New User</button>
   <button class="report-button" type="button" {{on "click" this.openReportPopup}}>Report</button>
@@ -79,7 +79,7 @@
         <h2>Recover User</h2>
         <form {{on "submit" this.recoverUser}}>
           <label for="recoverAccountName">Account Name:</label>
-          <input type="text" id="recoverAccountName" name="recoverAccountName" value={{this.recoverAccountName}} {{on "input" this.updateRecoverAccountName}} required />
+          <input type="text" id="recoverAccountName" name="recoverAccountName" placeholder="eg : ram" value={{this.recoverAccountName}} {{on "input" this.updateRecoverAccountName}} required />
 
           <label for="recoverTimeCreated">Time Created:</label>
           <input type="text" id="recoverTimeCreated" name="recoverTimeCreated" placeholder="YYYY-MM-DD HH:MM:SS" value={{this.recoverTimeCreated}} {{on "input" this.updateRecoverTimeCreated}} required />
@@ -102,25 +102,25 @@
         <h2>Create New User</h2>
         <form {{on "submit" this.createUser}}>
           <label for="firstName">First Name:</label>
-          <input type="text" id="firstName" name="firstName" value={{this.firstName}} {{on "input" this.updateFirstName}} required />
+          <input type="text" id="firstName" name="firstName" placeholder="eg : john" value={{this.firstName}} {{on "input" this.updateFirstName}} required />
 
           <label for="lastName">Last Name:</label>
-          <input type="text" id="lastName" name="lastName" value={{this.lastName}} {{on "input" this.updateLastName}} required />
+          <input type="text" id="lastName" name="lastName" placeholder="eg : doe" value={{this.lastName}} {{on "input" this.updateLastName}} required />
 
           <label for="displayName">Display Name:</label>
-          <input type="text" id="displayName" name="displayName" value={{this.displayName}} {{on "input" this.updateDisplayName}} required />
+          <input type="text" id="displayName" name="displayName" placeholder="eg : johndoe" value={{this.displayName}} {{on "input" this.updateDisplayName}} required />
 
           <label for="logOnName">Log On Name:</label>
-          <input type="text" id="logOnName" name="logOnName" value={{this.logOnName}} {{on "input" this.updateLogOnName}} required />
+          <input type="text" id="logOnName" name="logOnName" placeholder="eg : johndoe" value={{this.logOnName}} {{on "input" this.updateLogOnName}} required />
 
           <label for="mail">Mail:</label>
-          <input type="email" id="mail" name="mail" value={{this.mail}} {{on "input" this.updateMail}} required />
+          <input type="email" id="mail" name="mail" placeholder="eg : johndoe@gmail.com" value={{this.mail}} {{on "input" this.updateMail}} required />
 
           <label for="description">Description:</label>
-          <input type="text" id="description" name="description" value={{this.description}} {{on "input" this.updateDescription}} required />
+          <input type="text" id="description" name="description" placeholder="Enter new description" value={{this.description}} {{on "input" this.updateDescription}} required />
 
           <label for="telephoneNumber">Telephone Number:</label>
-          <input type="text" id="telephoneNumber" name="telephoneNumber" value={{this.telephoneNumber}} {{on "input" this.updateTelephoneNumber}} required />
+          <input type="text" id="telephoneNumber" name="telephoneNumber" placeholder="Enter mobile number" value={{this.telephoneNumber}} {{on "input" this.updateTelephoneNumber}} required />
 
           <button type="submit">Create User</button>
         </form>

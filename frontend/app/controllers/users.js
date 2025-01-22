@@ -32,6 +32,7 @@ export default class UsersController extends Controller {
   @tracked recoverAccountName = '';
   @tracked recoverTimeCreated = '';
   @tracked recoverUserError = '';
+  @tracked objCreatedAt = '';
 
   constructor() {
     super(...arguments);
@@ -86,6 +87,10 @@ export default class UsersController extends Controller {
         throw new Error(`Failed to fetch user details: ${response.statusText}`);
       }
       const user = await response.json();
+
+      this.objCreatedAt = user.whenCreated;
+
+
       console.log('Fetched user details:', user);
       this.selectedUser = {
         name: user.name,
@@ -100,6 +105,7 @@ export default class UsersController extends Controller {
     } catch (error) {
       console.error('Error fetching user details:', error);
     }
+    console.log('------',this.objCreatedAt);
   }
 
   @action
@@ -239,8 +245,8 @@ export default class UsersController extends Controller {
             phnnumber: this.telephoneNumber,
             description: this.description,
             displayname: this.displayName,
-            accountName: this.accountName,
-            timeCreated: this.timeCreated,
+            // accountName: this.accountName,
+            // timeCreated: this.timeCreated,
           }),
         },
       );
@@ -248,6 +254,7 @@ export default class UsersController extends Controller {
       console.log('Create user response:', result);
       if (result.status === 'success') {
         this.fetchUsers();
+        alert('User created successfully!');
         this.closeNewUserPopup();
       } else if (result.message.includes('User already exists')) {
         this.createUserError = 'User already exists!';
@@ -332,12 +339,30 @@ async recoverUser(event) {
     alert('All fields are required!');
     return;
   }
+  await this.showUserDetails(this.recoverAccountName);
 
   const currentTime = new Date();
+  const createTime = new Date(this.objCreatedAt);
   const recoverTime = new Date(this.recoverTimeCreated);
   console.log('Current time:', currentTime);
+  console.log('Create time:', createTime);
+  // if(this.recoverTimeCreated.length < 19){
+  //   alert('Entered time is not in correct format');
+  //   return;
+  // }
+
+
+  if(!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(this.recoverTimeCreated)) {
+    alert('Entered time is not in the correct format. Please use YYYY-MM-DD HH:MM:SS');
+    return;
+  }
+  // console.log(this.recoverTimeCreated.length, "---");
   if(recoverTime > currentTime){
-    alert('Enter valid time');
+    alert('Entered time is future time');
+    return;
+  }
+  else if(recoverTime < createTime){
+    alert('This user is not created at this time, Enter time after '+ this.objCreatedAt);
     return;
   }
   try {
@@ -358,7 +383,7 @@ async recoverUser(event) {
     );
 
     if (response.status === 404) {
-      alert('No matching records found');
+      alert('No modification records found');
       return;
     }
     console.log('Recover user response:', response);

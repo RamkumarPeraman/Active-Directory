@@ -2,6 +2,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  background-color: rgb(0 0 0 / 10%);
   display: flex;
   height: 100vh;
   box-sizing: border-box;
@@ -141,7 +142,6 @@ body {
   margin-left: -10px;
   height: 100px;
 }
-
 .home_icon,
 .users_icon,
 .ou_icon,
@@ -151,19 +151,16 @@ body {
   margin-top: 2px;
   max-width: 50px;
 }
-
-.groups_icon {
+.groups_icon{
   max-width: 60px;
 }
-
 .u_icon,
 .g_icon,
 .c_icon,
-.o_icon {
+.o_icon{
   max-width: 80px;
 }
-
-.popup {
+.popup{
   position: fixed;
   top: 0;
   left: 0;
@@ -174,8 +171,7 @@ body {
   justify-content: center;
   align-items: center;
 }
-
-.popup-content {
+.popup-content{
   background-color: #fff;
   padding: 2rem;
   border-radius: 0.25rem;
@@ -185,8 +181,7 @@ body {
   box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
   overflow: scroll;
 }
-
-.close-button {
+.close-button{
   background-color: #af4c4c;
   color: white;
   border: none;
@@ -199,51 +194,45 @@ body {
   right: 10px;
 }
 
-.close-button:hover {
+.close-button:hover{
   background-color: #e74c3c;
 }
 
-.sort-options {
+.sort-options{
   margin-top: -30px;
   text-align: left;
   flex: 1;
 }
-
-#sort {
+#sort{
   padding: 8px;
   width: 100%;
   max-width: 200px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
-.search-sort-container {
+.search-sort-container{
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
 }
-
-.search-options {
+.search-options{
   text-align: right;
   margin-left: 67%;
   flex: 1;
 }
-
-.search-wrapper {
+.search-wrapper{
   position: relative;
   width: 100%;
   max-width: 350px;
 }
-
-.search_icon {
+.search_icon{
   height: 20px;
   position: absolute;
   top: 50%;
   left: 15px;
   transform: translateY(-50%);
 }
-
-#search {
+#search{
   padding: 10px 15px 10px 40px;
   width: 100%;
   border: 1px solid #4caf50;
@@ -253,26 +242,22 @@ body {
   color: #333;
   transition: border-color 0.3s ease-in-out;
 }
-
-#search:focus {
+#search:focus{
   outline: none;
   border-color: #388e3c;
   background-color: #fff;
 }
-
-label {
+label{
   font-weight: bold;
   margin-right: 10px;
   font-size: 14px;
 }
-
-.total-count {
+.total-count{
   margin-left: 94%;
   margin-top: -2.2%;
   font-size: 20px;
 }
-
-.new-button {
+.new-button{
   background-color: #00da53;
   border: 2px solid #b4e0b7;
   width: 10%;
@@ -282,7 +267,7 @@ label {
   font-size: 16px;
   color: #030303;
   text-align: center;
-  margin: -0% 0 3% 27%;
+  margin: -0% 0 3% 26%;
   border-radius: 4px;
   cursor: pointer;
   transition:
@@ -324,16 +309,13 @@ label {
     background-color 0.3s ease,
     box-shadow 0.3s ease;
 }
-
 .new-button:hover {
   background-color: #a0d7a1;
   box-shadow: 0 4px 8px rgb(0 0 0 / 10%);
 }
-
 .new-button:active {
   background-color: #88c28d;
 }
-
 form {
   display: flex;
   flex-direction: column;

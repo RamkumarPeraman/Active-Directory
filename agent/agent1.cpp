@@ -363,7 +363,7 @@ void fetchOUData(const char* base_dn) {
     dataTraverse(base_dn,combinedFilter.c_str(), ou_attributes, processOUEntry);
     if(!ouData.empty() && !servletSend){
         ouData.pop_back();
-        sendDataToServlet(URL+"/ComputerDataServlet", ouData);
+        sendDataToServlet(URL+"/OUDataServlet", ouData);
         cout << "Computer data sent to ComputerDataServlet: " << ouData << endl;
         servletSend = true;
         ouData = "";
